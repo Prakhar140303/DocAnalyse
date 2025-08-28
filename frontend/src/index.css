@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* .selected-hover{
+    @apply rounded-xl  hover:bg-primary/70 hover:text-white;
+} */
