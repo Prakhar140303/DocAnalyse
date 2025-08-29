@@ -1,27 +1,37 @@
 import React, { useState } from 'react';
-import { BadgeQuestionMark, Upload, X } from 'lucide-react';
+import { BadgeQuestionMark, Upload, X ,Menu} from 'lucide-react';
 import {useNavigate} from 'react-router-dom' 
-function Header() {
+
+function Header({toggleSidebar}) {
   const [helpModalOpen, setHelpModalOpen] = useState(false);
   const navigate = useNavigate();
   return (
     <div>
-
-      <div className='w-full flex gap-4 justify-end p-2'>
-        <div
-          className='flex gap-2 p-2 rounded-lg bg-primary/20 cursor-pointer hover:bg-primary/30 transition'
-          onClick={() => setHelpModalOpen(true)}
+      <div>
+        <div className="flex items-center justify-between bg-white shadow p-4 md:hidden">
+        <button
+          className="md:hidden"
+          onClick={toggleSidebar}
         >
-          <BadgeQuestionMark />
-          Help
+          <Menu className="w-6 h-6" />
+        </button>
+      </div>
+        <div className='w-full flex gap-4 justify-end p-2'>
+          <div
+            className='flex gap-2 p-2 rounded-lg bg-primary/20 cursor-pointer hover:bg-primary/30 transition'
+            onClick={() => setHelpModalOpen(true)}
+          >
+            <BadgeQuestionMark />
+            Help
+          </div>
+
+          <div className='flex gap-2 p-2 rounded-lg bg-primary text-white selected-hover cursor-pointer'
+            onClick ={()=> {navigate('/home')}}>
+            <Upload />
+            Upload
+          </div>
         </div>
 
-        {/* Upload Button */}
-        <div className='flex gap-2 p-2 rounded-lg bg-primary text-white selected-hover cursor-pointer'
-          onClick ={()=> {navigate('/home')}}>
-          <Upload />
-          Upload
-        </div>
       </div>
 
       {helpModalOpen && (
