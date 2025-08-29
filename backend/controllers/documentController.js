@@ -68,15 +68,15 @@ export const handleGenerate = async (req, res) => {
     console.log(req.body);
 
     const prompt = `Summarize the following text into a plain list of points.
-Rules:
-- Do NOT return JSON, arrays, or objects.
-- Do NOT use Markdown (no *, no **, no -, no numbering).
-- Just output each point on a new line as plain text.
-- Keep the tone: ${tone}
-- Length: ${length}
+        Rules:
+        - Do NOT return JSON, arrays, or objects.
+        - Do NOT use Markdown (no *, no **, no -, no numbering).
+        - Just output each point on a new line as plain text.
+        - Keep the tone: ${tone}
+        - Length: ${length}
 
-Text:
-"""${text}"""`;
+        Text:
+        """${text}"""`;
 
     const result = await model.generateContent(prompt);
     let rawOutput = result.response.text().trim();

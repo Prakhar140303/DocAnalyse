@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import documentRoutes from './routers/document.routes.js'
 import cors from 'cors'
+import path from 'path'
 dotenv.config()
 const PORT = process.env.PORT || 5001;
 const  app = express();
@@ -23,6 +24,7 @@ app.use(cors({
 
 app.use('/api',documentRoutes);
 
+const __dirname = path.resolve();
 if(process.env.NODE_ENV === "production") {
 
     app.use(express.static(path.join(__dirname,"../frontend/dist")));
