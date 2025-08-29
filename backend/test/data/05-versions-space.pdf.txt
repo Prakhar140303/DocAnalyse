@@ -1,0 +1,57 @@
+
+
+PRAKHAR SINGH PARIHAR
+#prakharsingh130303@gmail.com+91 7800900550*Kanpur, Uttar Pradesh
+ïlinkedin.com/in/prakhar140303/§github.com/Prakhar140303
+Professional Summary
+Highly motivated computer Science undergraduate with proven expertise in Data Structures and Algorithms and competitive programming. Adept
+at solving complex problems, optimizing performance, and delivering efficient, scalable solutions. Eager to leverage strong algorithmic expertise
+and full-stack development skills to deliver high-quality, impactful software solutions.Committed to continuous learning and applying emerging
+technologies to real-world challenges.
+Education
+B.Tech in Computer Science and EngineeringDec 2022–Present
+Pranveer Singh Institute of Technology, Kanpur,CGPA: 7.59/10
+Senior Secondary (Class 12)Apr 2020–Jan 2021
+Guru Nanak Public School, Kanpur,82.16%
+High School (Class 10)Apr 2018–Feb 2019
+Dr P R Wasson Public School, Kanpur,90.33%
+Projects
+MaizeGuard – Maize Disease Prediction AppJan 2025–Ongoing
+Live Project
+•Trained a Convolution Neural Network on 6 000+ maize-leaf images spanning 5 disease categories, achieving 93 % accuracy
+•Built a Flask API and React front-end, processing 20 images/min and handling 50 concurrent requests.
+•Integrated image preprocessing (resizing, normalization) and ensured consistent inference performance across various input conditions.
+•Tech Stack: Python, Flask, TensorFlow, Keras, NumPy , Google Generative AI , React.js , TailwindCSS
+BingeShop – Scalable E-commerce PlatformDec 2024 - July 2025
+Live Project
+•Developed a full-stack e-Commerce platform with features such as user authentication, product listing, and secure Razorpay payment gateway,
+managing 500+ products efficiently.
+•Implemented JWT authentication and used Redux for state management, improving the user experience by 40%.
+•Designed a scalable MongoDB schema with Redis caching, reducing query time by 70%.
+•Implemented pagination to efficiently load large product catalogs, enhancing performance for high traffic.
+•Tech Stack: MongoDB, Express.js, React.js, Node.js, Redux, TailwindCSS, ShadeCN , JWT token, framer-motion, Razor pay, Redis
+RelayWire – Real-time Chat WebAppAug 2024 - Dec 2024
+Live Project
+•Built a real-time messaging platform that allows instant chat using WebSockets and supports up to 300 concurrent users.
+•Integrated JWT-based authentication and authorization for secure user sessions.◦
+•Managed global state using Zustand, ensuring efficient performance and reactivity.
+•Tech Stack: MongoDB, Express.js, React.js, Node.js, Socket.io, Zustand, TailwindCSS, DaisyUI
+Skills
+Languages:C, C++, Python, JavaScript (ES6+), TypeScript
+Frameworks & Libraries:HTML, CSS, React.js, Next.js, Redux, Bootstrap, Tailwindcss, Node.js, Express.js,
+Mongoose, REST APIs, Redis ,AWS (EC2, S3),
+Databases:MongoDB, SQL(MySQL), Redis
+Tools & Platforms:Git GitHub, Docker, Jest, Postman, Linux
+Subject of Interest:Data Structures and Algorithms, DBMS, Operating System, Computer Networking
+Soft Skills:Problem Solving, Analytical Thinking, Collaboration, Adaptability, Time Manage-
+ment
+Achievements
+•Advanced to Round 2 of L’Oréal Sustainability Challenge 2025 among top national teams.
+•LeetCode:Achieved the top 5% global ranking in LeetCode (1200+ solved problems) .
+•Secured rank #84 out of 35000 in Naukri codequezt #20 Coding Challange- Top 0.24% nationwide.
+•Salesforce Agentblazer Badge: “Adventurer”– 37 badges, 11.8k+ points, 3 trails.
+Certifications
+•Back-end app with Node.js and Express.js (IBM)-Credential2025
+•Front-end app with React (IBM)-Credential2025
+•Supervised Machine Learning: Regression and Classification (Stanford University)-Credential2024
+•AWSCloudTechnical Essentials (AWS)-Credential2024

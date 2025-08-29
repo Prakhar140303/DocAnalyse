@@ -4,7 +4,7 @@ import Tesseract from "tesseract.js";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import pdf from "pdf-poppler";
+import pdfParse from "pdf-parse";
 import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -17,7 +17,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const __filename = fileURLToPath(import.meta.url);
-const uploadsDir = path.join(process.cwd(), "backend", "uploads");
+const uploadsDir = path.join(process.cwd(), "uploads");
 
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
@@ -33,35 +33,26 @@ export const documentUpload = async (req, res) => {
 
     let texts = [];
 
+    // Tesseract for images
     if (file.mimetype.startsWith("image/")) {
       const result = await Tesseract.recognize(file.path, "eng");
       texts.push(result.data.text);
-    } else if (file.mimetype === "application/pdf") {
-      const outputPrefix = path.join(uploadsDir, Date.now().toString());
-
-      await pdf.convert(file.path, {
-        format: "jpeg",
-        out_dir: path.dirname(outputPrefix),
-        out_prefix: path.basename(outputPrefix),
-        page: null,
-      });
-
-      let page = 1;
-      while (true) {
-        const imagePath = `${outputPrefix}-${page}.jpg`;
-        if (!fs.existsSync(imagePath)) break;
-
-        const result = await Tesseract.recognize(imagePath, "eng");
-        texts.push(result.data.text);
-
-        fs.unlink(imagePath, () => {});
-        page++;
-      }
+    } 
+    // pdf-parse for PDFs
+    else if (file.mimetype === "application/pdf") {
+      const dataBuffer = fs.readFileSync(file.path);
+      const data = await pdfParse(dataBuffer);
+      console.log(data);
+      texts.push(data.text);
     } else {
-      return res.status(400).send("Only images or PDFs allowed");
+      // Handle unsupported file types
+      return res.status(400).send("Only images or PDFs are allowed");
     }
 
-    fs.unlink(file.path, () => {});
+    // Clean up the uploaded file from the server's disk
+    fs.unlink(file.path, () => {
+      console.log(`Deleted file: ${file.path}`);
+    });
 
     res.json({ success: true, data: texts.join("\n\n") });
   } catch (err) {
