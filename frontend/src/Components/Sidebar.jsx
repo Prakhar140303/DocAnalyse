@@ -7,7 +7,7 @@ function Sidebar() {
     <div className='bg-primary-light h-full px-4 flex flex-col justify-between'>
         <div className=''>
 
-            <div className='flex items-center gap-3 p-4  border-b  text-primary-dark font-bold'>
+            <div className='flex items-center gap-3 p-4  border-b  text-primary-dark font-bold cursor-pointer' onClick={()=>navigate('/')}>
                 <Files />
                 <h1 className='text-xl '> Summarizer Assistant </h1>
             </div>
@@ -15,7 +15,7 @@ function Sidebar() {
             <h2 className='opacity-45 my-4'>Workspace</h2>
 
             <div className='flex flex-col gap-[1vh] py-4'>
-                <div className='flex  gap-3 p-4 text-lg text-primary-dark border-b selected-hover' onClick={()=>{navigate('/')}}>
+                <div className='flex  gap-3 p-4 text-lg text-primary-dark border-b selected-hover' onClick={()=>{navigate('/home')}}>
                     <House />
                     <span>Home</span>
                 </div>
@@ -38,7 +38,7 @@ function Sidebar() {
                 <User  className='bg-primary-dark/75 text-primary-extralight rounded-full size-[5.5vh]'/>
             </div>
             <div className='flex flex-[5] flex-col w-full  items-stat '>
-                <span className='text-lg font-semibold'>Prakhar singh</span>
+                <span className='text-lg font-semibold'>User</span>
                 <span className='opacity-45 '>Free Plan</span>
                 
             </div>

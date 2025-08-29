@@ -5,3 +5,6 @@
 /* .selected-hover{
     @apply rounded-xl  hover:bg-primary/70 hover:text-white;
 } */
+html {
+  scroll-behavior: smooth;
+}

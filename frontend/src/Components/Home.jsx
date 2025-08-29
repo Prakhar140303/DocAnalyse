@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { FolderUp, UploadCloud, FileText, Copy, Download, Sparkles } from 'lucide-react'
+import { FolderUp, UploadCloud, FileText, Copy, Download, Sparkles, Expand } from 'lucide-react'
 import axiosInstance from '../utils/axiosInstance'
+import toast from 'react-hot-toast'
 
 function Home() {
   const [file, setFile] = useState(null);
@@ -10,8 +11,9 @@ function Home() {
   const [loaded, setLoaded] = useState(false);
   const [extractedText, setExtractedText] = useState('');
   const [loading, setLoading] = useState(false);
-  const [extractedTextModalOpen,setExtractedTextModalOpen] = useState(false);
-  const [summary, setSummary] = useState([]); // ✅ store summary points
+  const [extractedTextModalOpen, setExtractedTextModalOpen] = useState(false);
+  const [summaryModalOpen, setSummaryModalOpen] = useState(false);
+  const [summary, setSummary] = useState([]);
   const [generating, setGenerating] = useState(false);
 
   const handleFile = (e) => {
@@ -48,82 +50,157 @@ function Home() {
   };
 
   const handleGenerate = async () => {
-  if (!extractedText) return;
-  setGenerating(true);
+    if (!extractedText) return;
+    setGenerating(true);
 
-  try {
-    const res = await axiosInstance.post('/summarize', {
-      text: extractedText,
-      length,
-      tone,
-    });
+    try {
+      const res = await axiosInstance.post('/summarize', {
+        text: extractedText,
+        length,
+        tone,
+      });
 
-    const newSummary = res.data?.data || [];
+      const newSummary = res.data?.data || [];
+      setSummary(newSummary);
 
-    setSummary(newSummary);
+      const newSummaryObj = {
+        summary: newSummary,
+        tone,
+        length,
+        timestamp: new Date().toISOString(),
+      };
 
-
-    const newSummaryObj = {
-      summary: newSummary,
-      tone,
-      length,
-      timestamp: new Date().toISOString(),
-    };
-
-    const storedSummaries = sessionStorage.getItem("summaries");
-    let updatedSummaries = [];
-    if (storedSummaries) {
-      try {
-        updatedSummaries = JSON.parse(storedSummaries);
-      } catch {
-        updatedSummaries = [];
+      const storedSummaries = sessionStorage.getItem("summaries");
+      let updatedSummaries = [];
+      if (storedSummaries) {
+        try {
+          updatedSummaries = JSON.parse(storedSummaries);
+        } catch {
+          updatedSummaries = [];
+        }
       }
+      updatedSummaries.push(newSummaryObj);
+      sessionStorage.setItem("summaries", JSON.stringify(updatedSummaries));
+    } catch (err) {
+      console.error(err);
+      setSummary(["Failed to generate summary"]);
+    } finally {
+      setGenerating(false);
     }
+  };
 
-    updatedSummaries.push(newSummaryObj);
+  // helper to show preview text
+  const getPreviewText = (text) => {
+    const MAX_LENGTH = 550;
+    if (!text) return "Extracted Text will be visible here";
+    if (text.length <= MAX_LENGTH) return text;
+    return text.slice(0, MAX_LENGTH) + " . . . . .";
+  };
 
-
-    sessionStorage.setItem("summaries", JSON.stringify(updatedSummaries));
-
-  } catch (err) {
-    console.error(err);
-    setSummary(["Failed to generate summary"]);
-  } finally {
-    setGenerating(false);
+// copying to clip board
+const handleCopySummary = () => {
+  if (summary.length === 0) {
+    toast.error("No summary to copy!");
+    return;
   }
+
+  const textToCopy = summary.join('\n');
+  navigator.clipboard.writeText(textToCopy)
+    .then(() => {
+      toast.success("Summary copied to clipboard!");
+    })
+    .catch((err) => {
+      console.error("Failed to copy: ", err);
+      toast.error("Failed to copy summary.");
+    });
 };
 
+// handles the export of summary by creating a txt file and then appending the summary to it
+const handleExportSummary = () => {
+  if (summary.length === 0) {
+    toast.error("No summary to export!");
+    return;
+  }
+  const textToExport = summary.join('\n');
+  const blob = new Blob([textToExport], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
 
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${file?.name?.split('.')[0] || 'summary'}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+  toast.success("Summary exported successfully!");
+};
 
   return (
-    <div className='flex gap-4 w-full rounded-lg h-full' >
-      {/* Modal */}
-      {extractedTextModalOpen && (
-        <div className='modal p-[10vw] cursor-pointer ' onClick={()=>setExtractedTextModalOpen(false)}>
-          <div className='bg-white flex justify-center items-center p-4 gap-2 rounded-2xl flex-col' onClick={(e)=>e.stopPropagation()}>
-            <h1 className='text-2xl  font-semibold'>Extracted Text</h1>
-            <p className='p-2 border-1 border-black rounded-2xl shadow-2xl shadow-black'>
-              {extractedText}
-            </p>
+    <div className='flex md:flex-row flex-col gap-4 w-full rounded-lg h-full' >
+      {/* Extracted Text Modal */}
+      {extractedTextModalOpen && extractedText && (
+        <div className="modal p-[10vw] cursor-pointer" onClick={() => setExtractedTextModalOpen(false)}>
+          <div
+            className="bg-gray-200 flex justify-center md:min-w-[50vw] md:min-h-[50vh] min-w-[80vw] min-h-[60vh] items-center p-4 gap-2 rounded-2xl flex-col "
+            onClick={(e) => e.stopPropagation()}>
+            <h1 className="text-2xl font-semibold">Extracted Text</h1>
+
+            <textarea
+              className="p-2 w-full h-[40vh] rounded-2xl bg-white"
+              value={extractedText}
+              onChange={(e) => setExtractedText(e.target.value)}
+            />
+
+            <button
+              className="bg-primary text-white px-4 py-2 rounded-lg shadow selected-hover transition"
+              onClick={() => setExtractedTextModalOpen(false)}>
+              Save
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Summary Modal */}
+      {summaryModalOpen && summary.length > 0 && (
+        <div className="modal p-[10vw] cursor-pointer" onClick={() => setSummaryModalOpen(false)}>
+          <div
+            className="bg-gray-200 flex flex-col md:min-w-[50vw] md:min-h-[50vh] min-w-[80vw] min-h-[60vh] max-h-[80vh] p-4 gap-4 rounded-2xl"
+            onClick={(e) => e.stopPropagation()}>
+            <h1 className="text-2xl font-semibold">Generated Summary</h1>
+
+            <div className="bg-white w-full h-[40vh] p-3 rounded-xl overflow-y-auto shadow-inner">
+              <ul className="list-disc pl-5 text-gray-700 space-y-1">
+                {summary.map((point, i) => (
+                  <li key={i}>{point}</li>
+                ))}
+              </ul>
+            </div>
+
+            <button
+              className="bg-primary text-white px-4 py-2 rounded-lg shadow selected-hover transition self-end"
+              onClick={() => setSummaryModalOpen(false)}>
+              Close
+            </button>
           </div>
         </div>
       )}
 
       {/* column 1 */}
       <div className='flex-[4] flex flex-col h-full p-2 gap-4 rounded-3xl bg-white'>
-        <h1 className='text-xl font-semibold text-black p-4'>Upload Document</h1>
+        <h1 className='text-xl font-semibold text-black p-1'>Upload Document</h1>
         <label
           onDragOver={(e) => {
-            e.preventDefault();
+            e.preventDefault()
             setIsDragging(true);
           }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={handleDrop}
-          className={`flex flex-col p-6 justify-center items-center rounded-lg cursor-pointer transition 
+          className={`flex flex-col p-3 justify-center items-center rounded-lg cursor-pointer transition 
             ${isDragging ? 'bg-primary-dark text-white' : 'bg-primary-light'}
           `}
         >
-          <FolderUp className="size-16" />
+          <FolderUp className="size-12" />
           {!file ? (
             <div className='flex flex-col gap-2'>
               <span className='font-semibold opacity-75 text-lg'>
@@ -149,7 +226,7 @@ function Home() {
         <div className='flex gap-4'>
           <div className='flex-[3] flex flex-col gap-4'>
             {/* Summary Length */}
-            <div className='flex bg-primary-light p-2 py-4 rounded-lg gap-4 items-center'>
+            <div className='flex bg-primary-light p-1 py-2 rounded-lg gap-4 items-center'>
               <span>Summary Length</span>
               <div className='bg-white rounded-3xl flex gap-4 p-1'>
                 {['Short', 'Medium', 'Long'].map((l) => (
@@ -165,7 +242,7 @@ function Home() {
             </div>
 
             {/* Tone */}
-            <div className='flex bg-primary-light p-2 py-4 rounded-lg gap-4 items-center'>
+            <div className='flex bg-primary-light p-1 py-2 rounded-lg gap-4 items-center'>
               <span>Tone</span>
               <div className='bg-white rounded-3xl flex gap-4 p-1'>
                 {['Neutral', 'Formal', 'Casual'].map((t) => (
@@ -180,6 +257,7 @@ function Home() {
               </div>
             </div>
           </div>
+          
           <div className='flex-[1]'>
             <button
               className='p-2 selected-hover bg-primary text-white disabled:opacity-50 disabled:cursor-not-allowed'
@@ -190,13 +268,16 @@ function Home() {
             </button>
           </div>
         </div>
-
-        <h1 className=''>Extracted Text</h1>
-        <div 
-          className='min-h-[30vh] w-full border-b rounded-2xl px-4 py-2 bg-gray-200 overflow-hidden cursor-pointer' 
-          onClick={()=> setExtractedTextModalOpen(true)}
+          {extractedText &&
+            <div className='flex w-full justify-end p-2 px-4 '>
+              <button onClick={() => setExtractedTextModalOpen(true)}><Expand /></button>
+            </div>
+           }
+        <div
+          className='min-h-[30vh] max-h-[40vh] w-full border-b rounded-2xl px-4 py-2 bg-gray-200 md:overflow-hidden cursor-pointer'
+          onClick={() => setExtractedTextModalOpen(true)}
         >
-          <span>{loading ? 'Processing...' : extractedText || 'Extracted Text will be visible here'}</span>
+          <span>{loading ? 'Processing...' : getPreviewText(extractedText)}</span>
         </div>
       </div>
 
@@ -208,11 +289,13 @@ function Home() {
             <span className="font-medium">{loaded ? file?.name : 'No document loaded'}</span>
           </div>
           <div className="flex gap-2">
-            <button className="p-2 rounded-lg flex items-center gap-2 bg-primary-light selected-hover">
+            <button className="p-2 rounded-lg flex items-center gap-2 bg-primary-light selected-hover"
+                onClick={handleCopySummary}>
               <Copy className="w-5 h-5 " />
               <span>Copy</span>
             </button>
-            <button className="p-2 rounded-lg flex items-center gap-2 selected-hover bg-primary text-white">
+            <button className="p-2 rounded-lg flex items-center gap-2 selected-hover bg-primary text-white"
+             onClick={handleExportSummary}>
               <Download className="w-5 h-5 " />
               <span>Export</span>
             </button>
@@ -220,30 +303,49 @@ function Home() {
         </div>
 
         <div className='w-full flex justify-end px-3 '>
-          <div className='bg-primary text-white flex items-center p-2 gap-2 selected-hover '>
+          <div className='bg-primary text-white flex items-center p-2 gap-2 selected-hover 'onClick={handleGenerate} disabled={generating}>
             <Sparkles />
-            <button className='text-md font-semibold ' onClick={handleGenerate} disabled={generating}>
+            <button className='text-md font-semibold ' >
               {generating ? "Generating..." : "Generate summary"}
             </button>
           </div>
         </div>
 
         {/* Summary section */}
-        <div className="bg-amber-50 border-l-4 border-amber-400 p-3 rounded-md mb-4">
+        
+
+        {summary.length > 0 ? (
+          <div>
+            <div className='flex w-full justify-end p-2 px-4'>
+              
+              <button onClick={() => setSummaryModalOpen(true)}><Expand /></button>
+            </div>
+            <div
+              className="bg-white shadow-md rounded-2xl p-4 border border-gray-200 hover:shadow-lg transition cursor-pointer"
+              onClick={() => setSummaryModalOpen(true)}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-gray-400"></span>
+                <span className="text-xs px-2 py-1 rounded bg-primary-extralight text-primary-dark">
+                  {tone} • {length}
+                </span>
+              </div>
+
+              <ul className="list-disc pl-5 text-gray-700 space-y-1 line-clamp-[10]">
+                {summary.map((point, i) => (
+                  <li key={i}>{point}</li>
+                ))}
+              </ul>
+              <p className="text-blue-500 text-xs mt-2">Click to expand →</p>
+            </div>
+          </div>): <div className="bg-amber-50 border-l-4 border-amber-400 p-3 rounded-md mb-4">
           <p className="text-amber-800 font-semibold">Summary:</p>
-          {summary.length > 0 ? (
-            <ul className="list-disc pl-5 text-amber-900">
-              {summary.map((point, idx) => (
-                <li key={idx}>{point}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-amber-900">Upload a PDF or image to generate a summary.</p>
-          )}
+          <p className="text-amber-900">Upload a PDF or image to generate a summary.</p>
         </div>
+        }
       </div>
     </div>
   )
 }
 
-export default Home;
+export default Home
