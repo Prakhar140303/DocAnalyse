@@ -32,7 +32,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
             <h1 className="text-xl">Summarizer Assistant</h1>
           </div>
 
-          <h2 className="opacity-45 my-4">Workspace</h2>
+          <h2 className="opacity-50 my-4">Workspace </h2>
 
           <div className="flex flex-col gap-[1vh] py-4">
             <div
