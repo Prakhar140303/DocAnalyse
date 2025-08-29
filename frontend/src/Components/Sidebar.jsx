@@ -32,17 +32,7 @@ function Sidebar() {
                     <span>New Summary</span>
                 </div>
         </div>
-        <div className='flex  w-full  items-center gap-3 p-4'>
-            <div className='flex-[1]'>
-                {/* image */}
-                <User  className='bg-primary-dark/75 text-primary-extralight rounded-full size-[5.5vh]'/>
-            </div>
-            <div className='flex flex-[5] flex-col w-full  items-stat '>
-                <span className='text-lg font-semibold'>User</span>
-                <span className='opacity-45 '>Free Plan</span>
-                
-            </div>
-        </div>
+        
     </div>
   )
 }
