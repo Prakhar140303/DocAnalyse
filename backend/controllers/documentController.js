@@ -89,11 +89,10 @@ Text:
 
     const result = await model.generateContent(prompt);
     let rawOutput = result.response.text().trim();
-
-    // 🔹 Clean code fences if Gemini adds them
+    
     rawOutput = rawOutput.replace(/```json|```/g, "").trim();
 
-    // 🔹 Convert plain text (newline separated) into array
+
     const summaryPoints = rawOutput
       .split("\n")
       .map(line => line.trim())
