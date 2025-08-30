@@ -39,7 +39,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
               className="flex gap-3 p-4 text-lg text-primary-dark border-b selected-hover cursor-pointer"
               onClick={() => handleNav('/home')}
             >
-              <House />
+              <House />z
               <span>Home</span>
             </div>
             <div
@@ -55,7 +55,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
 
           <div
             className="flex gap-3 p-4 text-lg border-b text-primary-dark selected-hover cursor-pointer"
-            onClick={() => handleNav('/new-summary')}
+            onClick={() => handleNav('/home')}
           >
             <Sparkles />
             <span>New Summary</span>
