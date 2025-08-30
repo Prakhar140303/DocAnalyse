@@ -39,7 +39,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
               className="flex gap-3 p-4 text-lg text-primary-dark border-b selected-hover cursor-pointer"
               onClick={() => handleNav('/home')}
             >
-              <House />z
+              <House />
               <span>Home</span>
             </div>
             <div

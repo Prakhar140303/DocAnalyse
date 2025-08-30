@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { FolderUp, UploadCloud, FileText, Copy, Download, Sparkles, Expand } from 'lucide-react'
 import axiosInstance from '../utils/axiosInstance'
 import toast from 'react-hot-toast'
-
+import Loader from './../utils/Loader'
 function Home() {
   const [file, setFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -138,6 +138,12 @@ const handleExportSummary = () => {
 
   return (
     <div className='flex md:flex-row flex-col gap-4 w-full rounded-lg h-full' >
+      {/* loader while generating summary */}
+      {
+        generating && <div className='modal'>
+          <Loader />
+        </div>
+      }
       {/* Extracted Text Modal */}
       {extractedTextModalOpen && extractedText && (
         <div className="modal p-[10vw] cursor-pointer" onClick={() => setExtractedTextModalOpen(false)}>
@@ -305,8 +311,7 @@ const handleExportSummary = () => {
         <div className='w-full flex justify-end px-3 '>
           <div className='bg-primary text-white flex items-center p-2 gap-2 selected-hover 'onClick={handleGenerate} disabled={generating}>
             <Sparkles />
-            <button className='text-md font-semibold ' >
-              {generating ? "Generating..." : "Generate summary"}
+            <button className='text-md font-semibold ' > Generate summary
             </button>
           </div>
         </div>
